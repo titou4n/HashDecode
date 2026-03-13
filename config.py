@@ -102,11 +102,10 @@ class Config:
         print("[SUCCESS] Hashcat installé.")
 
     # ===== RULES =====
-    FOLDER_RULES = FOLDER_PATH / "rules"
-    FOLDER_RULES.mkdir(exist_ok=True)
+    FOLDER_RULES_PATH = FOLDER_PATH / "rules"
+    FOLDER_RULES_PATH.mkdir(exist_ok=True)
 
-    LIST_RULES = os.listdir(FOLDER_RULES)
-    RULES_PATH = FOLDER_RULES
+    LIST_RULES = os.listdir(FOLDER_RULES_PATH)
 
     # ===== WORDLISTS =====
     FOLDER_WORDLIST = FOLDER_PATH / "wordlists"

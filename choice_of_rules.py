@@ -7,7 +7,7 @@ def choice_of_rules():
         print(f"{i+1} - {config.LIST_RULES[i]}")
 
     option_rules = int(input("Veuillez entrez la règle : "))
-    if 1 <= option_rules and option_rules < len(config.LIST_RULES):
-        return config.LIST_RULES[option_rules+1]
+    if 1 <= option_rules <= len(config.LIST_RULES):
+        return config.LIST_RULES[option_rules - 1]
     else:
-        choice_of_rules()
+        return choice_of_rules()

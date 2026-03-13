@@ -1,10 +1,59 @@
 from hash_decode import HashDecode
 from crack_file_of_password import CrackFileOfPassword
 from config import Config
+from choice_of_rules import choice_of_rules
+import os
 
 config = Config()
 hash_decode = HashDecode()
 crack_file_of_password = CrackFileOfPassword()
+
+
+###############################################
+#______________CRACK_PASSWORD_________________#
+###############################################
+
+def personalized_attack(type_hash, hash, name):
+    os.makedirs("personalized_attack", exist_ok=True)
+    fichier_name = open("personalized_attack\\"+name+".txt", "a")
+    fichier_name.write(str(name))
+    fichier_name.close()
+    print("Please enter information of the victim in the document 'personalized_attack\\"+name+".txt' : ")
+    validation = str(input("Avez-vous fini de remplir les information (Y/N) : "))
+    #if validation == "Y" or validation == "y":
+        #result = self.hash_decode.hash_brute_force_list_with_name_rules(str(type_hash),hash, name)
+        #result = rules_attack(str(type_hash),hash)
+        #return result
+
+def crak_password(hash:str, mode, select_rules=False) -> str:
+
+    result=""
+    type_hash = hash_decode.hash_analyser.get_hashcat_type(hash=hash)
+
+    start = hash_decode.give_time()
+
+    match mode:
+        case 0:
+            if select_rules:
+                rules = choice_of_rules()
+                print(f"[RULES SELECTED] {rules}")
+                path_rules = hash_decode.config.FOLDER_RULES_PATH / rules
+                result = hash_decode.rules_attack(str(type_hash),hash, path_rules)
+            else:
+                result = hash_decode.rules_attack(str(type_hash),hash)
+        case 3:
+            result = hash_decode.brute_force_attack(str(type_hash),hash)
+        case 9:
+            name = str(input("Input the name of the victim : "))
+            result = hash_decode.personalized_attack(type_hash, hash, name)
+        case _:
+            return
+
+    end = hash_decode.give_time()
+    elapsed = end - start
+    print(f"\nExecution time : {elapsed:.2f}ms")
+
+    hash_decode.print_result(result=result)
 
 if __name__ == "__main__":
     while True:
@@ -19,7 +68,7 @@ if __name__ == "__main__":
 
         #-------HASH-------------------------------------------------------------------------------#
         #hash=str(input("\nVeuillez-entrez le hash à cracker : "))
-        hash = "adf2e981f833c1b58b947d1670878020"
+        hash = "0a27c0f6e9276886d453064e4b86fcaa"
         #------------------------------------------------------------------------------------------#
         attack_mode = '''
         [ Attack Modes ] -
@@ -36,7 +85,7 @@ if __name__ == "__main__":
         print(attack_mode)
 
         mode = int(input("Please enter the desired attack type : "))
-        hash_decode.crak_password(hash=hash, mode=mode, select_rules=True)
+        crak_password(hash=hash, mode=mode, select_rules=True)
 
         #chemin = str(input("Veuillez entrez le chemin du fichier '.txt' contenant les hashs : "))
         #crack_file_of_password.crak_file_password_hash(chemin)
