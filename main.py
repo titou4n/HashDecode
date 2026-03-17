@@ -1,29 +1,39 @@
-from hash_decode import HashDecode
-from crack_file_of_password import CrackFileOfPassword
+from tools.hash_decode import HashDecode
+from tools.crack_file_of_password import CrackFileOfPassword
+from tools.setup_hashcat import SetupHashcat
+from tools.choice_of_rules import choice_of_rules
 from config import Config
-from choice_of_rules import choice_of_rules
+
+from pathlib import Path
 import os
 
 config = Config()
+setup_hashcat = SetupHashcat()
 hash_decode = HashDecode()
 crack_file_of_password = CrackFileOfPassword()
-
 
 ###############################################
 #______________CRACK_PASSWORD_________________#
 ###############################################
 
 def personalized_attack(type_hash, hash, name):
-    os.makedirs("personalized_attack", exist_ok=True)
-    fichier_name = open("personalized_attack\\"+name+".txt", "a")
-    fichier_name.write(str(name))
-    fichier_name.close()
-    print("Please enter information of the victim in the document 'personalized_attack\\"+name+".txt' : ")
+
+    file_path = Path(os.path.join(config.FOLDER_PERSONALIZED_ATTACK, f"{name}.txt"))
+    if not os.path.exists(file_path):
+        try:
+            fichier_name = open(file_path, "a")
+            fichier_name.write(str(name))
+            fichier_name.close()
+        except FileNotFoundError:
+            print(f"This file doesn't exist.")
+            raise FileNotFoundError
+    
+    print(f"Please enter information of the victim in the document 'personalized_attack\\{name}.txt' : ")
     validation = str(input("Avez-vous fini de remplir les information (Y/N) : "))
-    #if validation == "Y" or validation == "y":
-        #result = self.hash_decode.hash_brute_force_list_with_name_rules(str(type_hash),hash, name)
-        #result = rules_attack(str(type_hash),hash)
-        #return result
+    if validation == "Y" or validation == "y":
+        result = hash_decode.rules_and_file_attack(str(type_hash),hash, file_path=file_path)
+        return result
+    
 
 def crak_password(hash:str, mode, select_rules=False) -> str:
 
@@ -45,7 +55,7 @@ def crak_password(hash:str, mode, select_rules=False) -> str:
             result = hash_decode.brute_force_attack(str(type_hash),hash)
         case 9:
             name = str(input("Input the name of the victim : "))
-            result = hash_decode.personalized_attack(type_hash, hash, name)
+            result = personalized_attack(type_hash, hash, name)
         case _:
             return
 
@@ -57,18 +67,17 @@ def crak_password(hash:str, mode, select_rules=False) -> str:
 
 if __name__ == "__main__":
     while True:
-
         print(config.WARNING)
         avertissement = str(input("En répondant 'Y', J'ai lu et accepté l'avertissement ci-dessus (Y/N) :"))
         if not(avertissement == "Y" or avertissement == "y"):
             print("Vous ne pouvez utiliser ce programe")
             break
 
-        config.setup_hashcat()
+        setup_hashcat.setup_hashcat()
 
         #-------HASH-------------------------------------------------------------------------------#
         #hash=str(input("\nVeuillez-entrez le hash à cracker : "))
-        hash = "0a27c0f6e9276886d453064e4b86fcaa"
+        hash = "3481f408ebcb62fe455fa5ed10a0b448"
         #------------------------------------------------------------------------------------------#
         attack_mode = '''
         [ Attack Modes ] -

@@ -1,5 +1,5 @@
-from hash_decode import HashDecode
-from hash_analyser import HashAnalyser
+from tools.hash_decode import HashDecode
+from tools.hash_analyser import HashAnalyser
 import time
 import os
 

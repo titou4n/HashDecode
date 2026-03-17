@@ -40,13 +40,19 @@ hashcat-*/
 # =========================
 # Wordlists
 # =========================
-wordlists/
+# tools/wordlists/
 *.txt
 
 # =========================
 # Rules
 # =========================
-#rules/
+# tools/rules/
+
+# =========================
+# FOLDER PERSONALISED ATTACK
+# =========================
+personalised_attack/
+
 
 # =========================
 # OS

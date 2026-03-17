@@ -4,7 +4,7 @@ import sys
 import importlib
 import time
 from config import Config
-from hash_analyser import HashAnalyser
+from tools.hash_analyser import HashAnalyser
 from pathlib import Path
 
 class HashDecode():
@@ -142,15 +142,15 @@ class HashDecode():
                       attack_mode:str,
                       rules: str | None = None,
                       runtime:int | None = None,
-                      other_argument:list | None = None
+                      other_argument:list | None = None,
+                      other_file:list | None = None
                       ) -> list:
         
         command = [
             self.hashcat_exe_path,
             "-m", hash_type,
             "-a", attack_mode,
-            "-O"
-            ]
+            "-O"]
 
         if rules is not None:
             command.extend(["-r", rules, "--loopback"])
@@ -161,7 +161,13 @@ class HashDecode():
         if other_argument is not None:
             command.extend(other_argument)
 
-        command.extend([hash, self.wordlist_path])
+        command.extend([hash])
+    
+        if other_file is not None:
+            command.extend(other_file)
+        else:
+            command.extend([self.wordlist_path])
+
         return command
 
     def brute_force_attack(self, hash_type:str, hash:str) -> str:
@@ -231,12 +237,13 @@ class HashDecode():
 
         command = self.get_command(hash=hash,
                         hash_type=hash_type,
-                        attack_mode="0",
+                        attack_mode="9",
                         rules=rules,
-                        other_argument=[file_path])
+                        other_file=[file_path])
 
         return self.execute_command(command=command, hash=hash)
-    
+
+
 class HashDecodeError(Exception):
     pass
 
